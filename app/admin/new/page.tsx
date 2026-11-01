@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
+import { videoMode } from "@/lib/video-mode";
 import { EntryForm } from "../entry-form";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export default async function NewEntry() {
   const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); // YYYY-MM-DD
   return (
     <div className="admin">
-      <EntryForm folder={`entry-${Date.now().toString(36)}`} initial={{ date: today }} />
+      <EntryForm folder={`entry-${Date.now().toString(36)}`} initial={{ date: today }} videoMode={videoMode} />
     </div>
   );
 }

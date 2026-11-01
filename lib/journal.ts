@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { isVideoUrl } from "./markdown";
 
 export type Entry = {
   slug: string;
@@ -28,7 +29,7 @@ function read(file: string): Entry {
     cover: data.cover || undefined,
     recordings: data.recordings ?? [],
     body: content.trim(),
-    images: (content.match(/!\[[^\]]*\]\(/g) ?? []).length,
+    images: [...content.matchAll(/!\[[^\]]*\]\(([^)\s]+)\)/g)].filter((m) => !isVideoUrl(m[1])).length,
   };
 }
 

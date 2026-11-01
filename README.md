@@ -33,6 +33,12 @@ cover: /journal/7680/01.webp
 
 The editor at `/admin` fills this in for you. Photos can be added with the button, dragged into the text, or pasted. They are resized in the browser (max 2000 px, WebP) before uploading. Phases are listed in `lib/phases.ts`.
 
+## Drafts and videos
+
+- **Autosave.** Everything typed in the editor is saved in your browser as you type (and when you switch tabs or close the page), so an accidental refresh can't lose it. Photos you add stay in the draft too. When you come back, the draft is restored with a "Discard draft" button. `/admin` lists all unpublished drafts. Drafts live in one browser; use the same browser until you publish. Publishing removes the draft.
+- **Videos.** In the editor use **Add video** (MP4, WebM or MOV up to 500 MB, uploaded straight to Vercel Blob storage), or **Embed video link** for YouTube, Vimeo or a direct `.mp4` link. Both appear as a player in the entry. MP4 (H.264) plays everywhere; iPhone `.mov` files may not play in every browser, so export as MP4 when you can. Locally, videos are saved to `public/journal/` instead.
+  The live site needs a Blob store connected to the project (Vercel → Storage → Create → Blob → Connect), which sets `BLOB_READ_WRITE_TOKEN` automatically.
+
 ## Login security
 
 - **Two-factor login.** `npm run setup-2fa` prints a setup key for an authenticator app (Google Authenticator, Authy, 1Password, …) and the `ADMIN_TOTP_SECRET` line to add. Each code works once and only for about 30 seconds. Production refuses to log anyone in until this is set and the password is at least 12 characters.

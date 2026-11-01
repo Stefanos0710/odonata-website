@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { isAdmin } from "@/lib/auth";
 import { getEntry } from "@/lib/journal";
+import { videoMode } from "@/lib/video-mode";
 import { EntryForm } from "../../entry-form";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ export default async function EditEntry({ params }: { params: Promise<{ slug: st
     <div className="admin">
       <EntryForm
         folder={entry.slug}
+        videoMode={videoMode}
         initial={{
           originalSlug: entry.slug,
           title: entry.title,

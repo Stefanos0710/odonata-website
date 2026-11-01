@@ -6,6 +6,7 @@ import { phaseLabel } from "@/lib/phases";
 import { formatDate, formatDuration } from "@/lib/markdown";
 import { storageMode } from "@/lib/storage";
 import { logout } from "./actions";
+import { DraftList } from "./draft-list";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Journal admin", robots: { index: false } };
@@ -29,6 +30,8 @@ export default async function Admin() {
           ? "Saving commits to GitHub. The live site updates about a minute later, once Vercel has redeployed."
           : "Local mode: saving writes files into this project folder. Commit and push them to publish."}
       </p>
+      <DraftList />
+      <h2 className="admin-sub">Published entries</h2>
       <ul className="admin-list">
         {entries.map((e) => (
           <li key={e.slug}>
