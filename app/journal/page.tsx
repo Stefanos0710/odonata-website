@@ -52,7 +52,7 @@ export default function JournalIndex() {
                     </span>
                     <span className="entry-bar" style={{ "--w": e.minutes / longest } as React.CSSProperties} />
                   </span>
-                  {e.cover ? <img src={e.cover} alt="" loading="lazy" /> : <span className="entry-thumb-empty" />}
+                  {e.cover ? <img src={e.cover} alt={`Cover photo of session ${n}: ${e.title}`} loading="lazy" /> : <span className="entry-thumb-empty" />}
                 </Link>
               </li>
             ))}

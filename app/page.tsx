@@ -3,6 +3,7 @@ import { getEntries } from "@/lib/journal";
 import { PHASES } from "@/lib/phases";
 import { formatDate, formatDuration } from "@/lib/markdown";
 import { getCommits } from "@/lib/github";
+import { CONTACT_EMAIL } from "@/lib/site";
 import { ContourMap } from "./contour-map";
 import { SessionCalendar } from "./session-calendar";
 
@@ -24,7 +25,7 @@ const FILMSTRIP = [
 const SETBACKS = [
   { quote: "It felt like building one decision always breaks another decision...", context: "Choosing parts that all fit together", href: "/journal/2026-04-22-find-out-the-basics-and-plan-the-fundamental" },
   { quote: "I worked on this mechanism for 5 hours and now everything was for the trash", context: "The tilting camera mount, before the redesign that worked", href: "/journal/2026-05-04-building-the-camera-and-servo-mechanism" },
-  { quote: "1 and a half hours of work for nothing T-T (ok, not for nothing, but nevermind)", context: "Forgetting to record a coding session", href: "/journal/2026-05-26-starting-coding-and-making-takoff" },
+  { quote: "1 and a half hours of work for nothing T-T (ok, not for nothing, but nevermind)", context: "Forgetting to record a coding session", href: "/journal/2026-05-26-starting-coding-and-making-takeoff" },
 ];
 
 export default async function Home() {
@@ -60,11 +61,16 @@ export default async function Home() {
           <h1>Odonata</h1>
           <p className="lede">
             I&rsquo;m building a drone that flies on its own. The first version lands itself on an AprilTag
-            station. The next one should fly through a forest and find trees hit by bark beetles.
+            station.
+          </p>
+          <p className="next-goal">
+            <a href="#forest">
+              Next: a drone that spots bark beetle damage in forests &ndash; for Jugend forscht 2027.
+            </a>
           </p>
           <div className="actions">
             <Link className="button" href="/journal">Read the build journal</Link>
-            <a className="button quiet" href="#build">See where it stands</a>
+            <a className="button quiet" href="#partners">Support the next step</a>
           </div>
         </div>
         <dl className="tally">
@@ -74,6 +80,22 @@ export default async function Home() {
           {commits > 0 && <div><dt>commits on GitHub</dt><dd>{commits}</dd></div>}
         </dl>
         <p className="hero-hint">Each point on the path is a build session, bigger means longer. Point at one to see it.</p>
+      </section>
+
+      <section id="about" className="band about" aria-labelledby="about-title">
+        <h2 id="about-title">Who&rsquo;s building it</h2>
+        <p>
+          I&rsquo;m Stefanos, a student from Bavaria, and I build Odonata myself, from CAD and PCB to code.
+          In 2026 I became state winner in Bavaria (Landessieger) at Jugend forscht junior
+          with <a href="https://signai.dev" target="_blank" rel="noopener">SignAI</a>, and I took part in
+          Hack Club&rsquo;s Moonshot and in <a href="https://fallout.hackclub.com/projects/130" target="_blank" rel="noopener">Fallout</a> in
+          Shenzhen.
+        </p>
+        <ul className="about-facts">
+          <li><strong>Landessieger Bayern 2026</strong><span>Jugend forscht junior, with <a href="https://signai.dev" target="_blank" rel="noopener">SignAI</a></span></li>
+          <li><strong>Hack Club Moonshot</strong><span>Participant</span></li>
+          <li><strong>Hack Club Fallout</strong><span>Odonata v1 was my project, the event was in Shenzhen</span></li>
+        </ul>
       </section>
 
       <section id="build" className="band">
@@ -158,7 +180,7 @@ export default async function Home() {
           </p>
           <dl className="specs">
             <div><dt>Weight</dt><dd>about 300 g</dd></div>
-            <div><dt>Thrust</dt><dd>about 1100 g, 3 : 1 to weight</dd></div>
+            <div><dt>Thrust</dt><dd>about 1100 g, 3:1 to weight</dd></div>
             <div><dt>Battery</dt><dd>3S 850 mAh, about 5 min flight</dd></div>
             <div><dt>Sensing</dt><dd>4 ToF distance sensors, 130° camera on a servo</dd></div>
             <div><dt>Landing</dt><dd>AprilTag tracking, self-centring station</dd></div>
@@ -211,7 +233,45 @@ export default async function Home() {
             <p>Return with a report: which trees were checked, where suspicious ones stand, and how sure the detection is.</p>
           </li>
         </ol>
+        <div className="needed">
+          <h3>What&rsquo;s needed</h3>
+          <p>
+            <strong>An NVIDIA Jetson Orin NX 16GB</strong>, because under the canopy there is no GPS and there are no
+            ground markers. The drone has to see and decide on its own: two depth cameras to avoid trunks and
+            branches, and one RGB camera to spot infestation, all processed on board and in real time. The small
+            single-board computer on v1 is far too slow for that.
+          </p>
+          <a className="button" href="#partners">Support this step</a>
+        </div>
         <p className="forest-note">This part is just starting. Progress will show up in the journal as it happens.</p>
+      </section>
+
+      <section id="partners" className="partners band" aria-labelledby="partners-title">
+        <div className="band-head">
+          <h2 id="partners-title">Partners</h2>
+          <p>
+            Odonata&rsquo;s next step is flying through real forest without GPS or ground markers. For that it needs
+            on-board AI: an NVIDIA Jetson Orin NX 16GB to run two depth cameras and one RGB camera on the drone
+            itself. I&rsquo;m looking for partners to support this step for Jugend forscht 2027.
+          </p>
+        </div>
+        <div className="partners-body">
+          <div>
+            <h3>Partners get</h3>
+            <ul className="perks">
+              <li>Their logo here on odonata.dev</li>
+              <li>Their logo on my competition poster and stand at Jugend forscht 2027</li>
+              <li>A credit in my written report</li>
+              <li>A build write-up showing what their support made possible</li>
+            </ul>
+            <p className="partners-cta">
+              Interested? <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>{CONTACT_EMAIL}</a>
+            </p>
+          </div>
+          <ul className="logo-wall" aria-label="Partner logos">
+            <li className="logo-slot">Your logo here</li>
+          </ul>
+        </div>
       </section>
 
       <section className="band">
@@ -223,7 +283,7 @@ export default async function Home() {
           {latest.map((e) => (
             <li key={e.slug}>
               <Link href={`/journal/${e.slug}`}>
-                {e.cover && <img src={e.cover} alt="" loading="lazy" />}
+                {e.cover && <img src={e.cover} alt={`Cover photo: ${e.title}`} loading="lazy" />}
                 <span className="card-meta">{formatDate(e.date)}, {formatDuration(e.minutes)}</span>
                 <span className="card-title">{e.title}</span>
               </Link>

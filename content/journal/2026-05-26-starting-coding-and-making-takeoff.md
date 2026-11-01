@@ -1,5 +1,5 @@
 ---
-title: "Starting coding and making Takoff!!!"
+title: "Starting coding and making Takeoff!!!"
 date: 2026-05-26T10:07:56Z
 minutes: 147
 phase: firmware
