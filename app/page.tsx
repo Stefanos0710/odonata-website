@@ -82,25 +82,76 @@ export default async function Home() {
         <p className="hero-hint">Each point on the path is a build session, bigger means longer. Point at one to see it.</p>
       </section>
 
-      <section id="about" className="band about" aria-labelledby="about-title">
-        <h2 id="about-title">Who&rsquo;s building it</h2>
-        <p>
-          I&rsquo;m Stefanos, a student from Bavaria, and I build Odonata myself, from CAD and PCB to code.
-          In 2026 I became state winner in Bavaria (Landessieger) at Jugend forscht junior
-          with <a href="https://signai.dev" target="_blank" rel="noopener">SignAI</a>, and I took part in
-          Hack Club&rsquo;s Moonshot and in <a href="https://fallout.hackclub.com/projects/130" target="_blank" rel="noopener">Fallout</a> in
-          Shenzhen.
-        </p>
+      <section id="about" className="band chapter about" aria-labelledby="about-title">
+        <div className="band-head">
+          <p className="eyebrow">01 · About</p>
+          <h2 id="about-title">Who&rsquo;s building it</h2>
+          <p>
+            I&rsquo;m Stefanos, a student from Bavaria, and I build Odonata myself, from CAD and PCB to code.
+            In 2026 I became state winner in Bavaria (Landessieger) at Jugend forscht junior
+            with <a href="https://signai.dev" target="_blank" rel="noopener">SignAI</a>, won Hack Club&rsquo;s
+            Moonshot, and took part in <a href="https://fallout.hackclub.com/projects/130" target="_blank" rel="noopener">Fallout</a> in
+            Shenzhen.
+          </p>
+        </div>
         <ul className="about-facts">
           <li><strong>Landessieger Bayern 2026</strong><span>Jugend forscht junior, with <a href="https://signai.dev" target="_blank" rel="noopener">SignAI</a></span></li>
-          <li><strong>Hack Club Moonshot</strong><span>Participant</span></li>
-          <li><strong>Hack Club Fallout</strong><span>Odonata v1 was my project, the event was in Shenzhen</span></li>
+          <li><strong>Winner, Hack Club Moonshot</strong><span>Hack Club hackathon</span></li>
+          <li><strong>Hack Club Fallout</strong><span>Shenzhen, with Odonata v1 as my project</span></li>
         </ul>
       </section>
 
-      <section id="build" className="band">
+      <section id="drone" className="band chapter" aria-labelledby="drone-title">
+        <div className="machine">
+          <figure className="machine-render">
+            <img src="/project/render-hero.webp" alt="Rendered CAD model of Odonata: an X-frame drone with prop guards" />
+          </figure>
+          <div className="machine-text">
+            <p className="eyebrow">02 · The drone</p>
+            <h2 id="drone-title">Odonata v1</h2>
+            <p>
+              Built for Hack Club Fallout in spring 2026. A Raspberry Pi Zero 2 W does the thinking, a DarwinFPV
+              F411 flight controller keeps it in the air, and a custom 4-layer PCB connects the two. The Pi talks
+              to the flight controller over MAVLink, and a web cockpit on a laptop starts and stops flights.
+            </p>
+            <dl className="specs">
+              <div><dt>Weight</dt><dd>about 300 g</dd></div>
+              <div><dt>Thrust</dt><dd>about 1100 g, 3:1 to weight</dd></div>
+              <div><dt>Battery</dt><dd>3S 850 mAh, about 5 min flight</dd></div>
+              <div><dt>Sensing</dt><dd>4 ToF distance sensors, 130° camera on a servo</dd></div>
+              <div><dt>Landing</dt><dd>AprilTag tracking, self-centring station</dd></div>
+              <div><dt>Parts cost</dt><dd>€264.84 including shipping</dd></div>
+            </dl>
+            <a className="github-tile" href="https://github.com/Stefanos0710/Odonata" target="_blank" rel="noopener">
+              <span className="github-tile-head">Code, CAD and PCB files on GitHub</span>
+              <span className="github-tile-time">
+                {Math.round(totalMinutes / 60)} hours logged{commits > 0 && <>, {commits} commits</>}
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <div className="sub-head">
+          <h3>From sketch to first flight</h3>
+          <p>Scroll sideways. Each picture opens the session it came from.</p>
+        </div>
+        <ol className="filmstrip">
+          {FILMSTRIP.map((f, i) => (
+            <li key={f.src}>
+              <a href={f.href} {...(f.href.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}>
+                <img src={f.src} alt={f.alt} loading="lazy" />
+                <span className="frame-no">{i + 1}</span>
+                <span className="frame-caption">{f.caption}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section id="build" className="band chapter" aria-labelledby="build-title">
         <div className="band-head">
-          <h2>The build, phase by phase</h2>
+          <p className="eyebrow">03 · The build</p>
+          <h2 id="build-title">The build, phase by phase</h2>
           <p>Every session is written up in the journal. Point at a day to see what happened.</p>
         </div>
         <div className="build-overview">
@@ -147,72 +198,27 @@ export default async function Home() {
             </li>
           ))}
         </ol>
-      </section>
 
-      <section className="band filmstrip-band" aria-labelledby="filmstrip-title">
-        <div className="band-head row">
-          <h2 id="filmstrip-title">From sketch to first flight</h2>
-          <p>Scroll sideways. Each picture opens the session it came from.</p>
-        </div>
-        <ol className="filmstrip">
-          {FILMSTRIP.map((f, i) => (
-            <li key={f.src}>
-              <a href={f.href} {...(f.href.startsWith("http") ? { target: "_blank", rel: "noopener" } : {})}>
-                <img src={f.src} alt={f.alt} loading="lazy" />
-                <span className="frame-no">{i + 1}</span>
-                <span className="frame-caption">{f.caption}</span>
-              </a>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="machine band">
-        <figure className="machine-render">
-          <img src="/project/render-hero.webp" alt="Rendered CAD model of Odonata: an X-frame drone with prop guards" />
-        </figure>
-        <div className="machine-text">
-          <h2>Odonata v1</h2>
-          <p>
-            Built for Hack Club Fallout in spring 2026. A Raspberry Pi Zero 2 W does the thinking, a DarwinFPV
-            F411 flight controller keeps it in the air, and a custom 4-layer PCB connects the two. The Pi talks
-            to the flight controller over MAVLink, and a web cockpit on a laptop starts and stops flights.
-          </p>
-          <dl className="specs">
-            <div><dt>Weight</dt><dd>about 300 g</dd></div>
-            <div><dt>Thrust</dt><dd>about 1100 g, 3:1 to weight</dd></div>
-            <div><dt>Battery</dt><dd>3S 850 mAh, about 5 min flight</dd></div>
-            <div><dt>Sensing</dt><dd>4 ToF distance sensors, 130° camera on a servo</dd></div>
-            <div><dt>Landing</dt><dd>AprilTag tracking, self-centring station</dd></div>
-            <div><dt>Parts cost</dt><dd>€264.84 including shipping</dd></div>
-          </dl>
-          <a className="github-tile" href="https://github.com/Stefanos0710/Odonata" target="_blank" rel="noopener">
-            <span className="github-tile-head">Code, CAD and PCB files on GitHub</span>
-            <span className="github-tile-time">
-              {Math.round(totalMinutes / 60)} hours logged{commits > 0 && <>, {commits} commits</>}
-            </span>
-          </a>
+        <div className="setbacks">
+          <div className="sub-head">
+            <h3>Not everything worked the first time</h3>
+            <p>A few lines from the journal, written right after things went wrong.</p>
+          </div>
+          <ul>
+            {SETBACKS.map((s) => (
+              <li key={s.href}>
+                <blockquote>{s.quote}</blockquote>
+                <Link href={s.href}>{s.context}</Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      <section className="band setbacks">
+      <section id="forest" className="forest band chapter" aria-labelledby="forest-title">
         <div className="band-head">
-          <h2>Not everything worked the first time</h2>
-          <p>A few lines from the journal, written right after things went wrong.</p>
-        </div>
-        <ul>
-          {SETBACKS.map((s) => (
-            <li key={s.href}>
-              <blockquote>{s.quote}</blockquote>
-              <Link href={s.href}>{s.context}</Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section id="forest" className="forest band">
-        <div className="band-head">
-          <h2>Next: into the forest</h2>
+          <p className="eyebrow">04 · What&rsquo;s next</p>
+          <h2 id="forest-title">Next: into the forest</h2>
           <p>
             For Jugend forscht 2027, Odonata leaves the living room. Bark beetles (Borkenkäfer) kill large areas
             of spruce every year, and an attack is easiest to stop when it is found early. Walking every stand to
@@ -233,22 +239,17 @@ export default async function Home() {
             <p>Return with a report: which trees were checked, where suspicious ones stand, and how sure the detection is.</p>
           </li>
         </ol>
-        <div className="needed">
-          <h3>What&rsquo;s needed</h3>
-          <p>
-            <strong>An NVIDIA Jetson Orin NX 16GB</strong>, because under the canopy there is no GPS and there are no
-            ground markers. The drone has to see and decide on its own: two depth cameras to avoid trunks and
-            branches, and one RGB camera to spot infestation, all processed on board and in real time. The small
-            single-board computer on v1 is far too slow for that.
-          </p>
-          <a className="button" href="#partners">Support this step</a>
-        </div>
+        <p className="forest-need">
+          <strong>What it needs:</strong> an NVIDIA Jetson Orin NX 16GB for on-board AI.{" "}
+          <a href="#partners">See how you can help</a>
+        </p>
         <p className="forest-note">This part is just starting. Progress will show up in the journal as it happens.</p>
       </section>
 
-      <section id="partners" className="partners band" aria-labelledby="partners-title">
+      <section id="partners" className="partners band chapter" aria-labelledby="partners-title">
         <div className="band-head">
-          <h2 id="partners-title">Partners</h2>
+          <p className="eyebrow">05 · Partners</p>
+          <h2 id="partners-title">Help Odonata into the forest</h2>
           <p>
             Odonata&rsquo;s next step is flying through real forest without GPS or ground markers. For that it needs
             on-board AI: an NVIDIA Jetson Orin NX 16GB to run two depth cameras and one RGB camera on the drone
@@ -256,7 +257,16 @@ export default async function Home() {
           </p>
         </div>
         <div className="partners-body">
-          <div>
+          <div className="needed">
+            <h3>What&rsquo;s needed</h3>
+            <p>
+              <strong>An NVIDIA Jetson Orin NX 16GB.</strong> Under the canopy there is no GPS and there are no
+              ground markers, so the drone has to see and decide on its own: two depth cameras to avoid trunks and
+              branches, and one RGB camera to spot infestation, all processed on board and in real time. The small
+              single-board computer on v1 is far too slow for that.
+            </p>
+          </div>
+          <div className="perks-box">
             <h3>Partners get</h3>
             <ul className="perks">
               <li>Their logo here on odonata.dev</li>
@@ -264,19 +274,26 @@ export default async function Home() {
               <li>A credit in my written report</li>
               <li>A build write-up showing what their support made possible</li>
             </ul>
-            <p className="partners-cta">
-              Interested? <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>{CONTACT_EMAIL}</a>
-            </p>
           </div>
+        </div>
+        <div className="partners-foot">
           <ul className="logo-wall" aria-label="Partner logos">
             <li className="logo-slot">Your logo here</li>
           </ul>
+          <p className="partners-cta">
+            <span>Interested?</span>
+            <a className="button" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>Write to me</a>
+            <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>{CONTACT_EMAIL}</a>
+          </p>
         </div>
       </section>
 
-      <section className="band">
+      <section id="latest" className="band chapter" aria-labelledby="latest-title">
         <div className="band-head row">
-          <h2>Latest from the journal</h2>
+          <div>
+            <p className="eyebrow">06 · Journal</p>
+            <h2 id="latest-title">Latest from the journal</h2>
+          </div>
           <Link href="/journal">All {entries.length} entries</Link>
         </div>
         <ul className="cards">
