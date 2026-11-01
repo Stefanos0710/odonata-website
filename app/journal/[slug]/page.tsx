@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getEntries, getEntry } from "@/lib/journal";
 import { phaseLabel } from "@/lib/phases";
 import { formatDate, formatDuration, renderMarkdown } from "@/lib/markdown";
+import { SHARE_IMAGE } from "@/lib/site";
 import { Lightbox } from "./lightbox";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -13,7 +14,16 @@ export const generateStaticParams = () => getEntries().map((e) => ({ slug: e.slu
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const entry = getEntry((await params).slug);
-  return entry ? { title: entry.title, openGraph: { images: entry.cover ? [entry.cover] : [] } } : {};
+  if (!entry) return {};
+  // Nested openGraph replaces the root one entirely, so repeat what the card needs.
+  const description = `Session from the Odonata build journal: ${formatDuration(entry.minutes)} of work on ${formatDate(entry.date)}.`;
+  const images = entry.cover ? [{ url: entry.cover, alt: entry.title }] : [SHARE_IMAGE];
+  return {
+    title: entry.title,
+    description,
+    openGraph: { type: "article", siteName: "Odonata", title: entry.title, description, url: `/journal/${entry.slug}`, publishedTime: entry.date, images },
+    twitter: { card: "summary_large_image", title: entry.title, description, images },
+  };
 }
 
 export default async function EntryPage({ params }: Props) {

@@ -10,6 +10,8 @@ Hey,
 
 a lot of time has passed since the last journal, and I want to give a small (or big) recap!
 
+Quick note on the gap between the end of May and today: the project didn't stop, I just stopped writing. Over the summer I went to Hack Club Fallout in Shenzhen, printed and soldered the whole drone, rewrote the flight code (three times...) and did the first flight tests. All of that is below, and from now on I'll post new entries regularly again.
+
 After I submitted the project for Fallout, I visited China and participated there. We built a drone again there; this time it could also drive, besides flying.
 
 ![The Fallout drone built in China, which can fly and drive](/journal/entry-mvxy5nvs/mvxyinmd767b7e.webp)

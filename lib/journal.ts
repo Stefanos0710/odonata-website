@@ -48,5 +48,10 @@ export function getEntry(slug: string) {
   return read(`${slug}.md`);
 }
 
-export const slugify = (s: string) =>
-  s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-").replace(/-+/g, "-").slice(0, 60).replace(/-$/, "");
+// Long titles are cut at the last whole word before 80 characters, so slugs never end mid-word.
+export const slugify = (s: string) => {
+  const slug = s.toLowerCase().normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/[\s_]+/g, "-").replace(/-+/g, "-");
+  if (slug.length <= 80) return slug.replace(/-$/, "");
+  const cut = slug.slice(0, 81);
+  return cut.slice(0, cut.lastIndexOf("-") > 0 ? cut.lastIndexOf("-") : 80).replace(/-$/, "");
+};

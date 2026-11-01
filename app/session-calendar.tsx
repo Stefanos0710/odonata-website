@@ -81,15 +81,15 @@ export async function SessionCalendar({ entries }: { entries: Entry[] }) {
       </div>
       <figcaption className="cal-legend">
         <span className="cal-scale" aria-hidden="true">
-          Time worked
+          Time per day: under 1 h
           {[1, 2, 3, 4, 5].map((l) => <span key={l} className="cal-day" data-level={l} />)}
-          4 h+
+          4 h or more
         </span>
         {showCommits && (
           <span className="cal-scale" aria-hidden="true">
-            Commits
+            Commits per day: 1
             {[1, 2, 3, 4].map((l) => <span key={l} className="cal-day" data-level={0} data-commits={l} />)}
-            10+
+            10 or more
           </span>
         )}
       </figcaption>
