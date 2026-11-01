@@ -135,6 +135,13 @@ h3 { font-size: 1.15rem; }
 .tally div { display: flex; flex-direction: column-reverse; }
 .tally dt { color: var(--muted); font-size: 0.95rem; }
 .tally dd { margin: 0; font-size: 2.6rem; font-weight: 750; font-variation-settings: "wdth" 112; line-height: 1; font-variant-numeric: tabular-nums; }
+/* Narrow screens: the map gets its own band above the text instead of running underneath it. */
+@media (max-width: 900px) {
+  .hero { --map-h: clamp(15rem, 55vw, 24rem); padding-top: calc(7rem + var(--map-h)); min-height: 0; gap: 2rem; }
+  .contour-map { inset: 6rem 0 auto; height: var(--map-h); mask-image: linear-gradient(transparent, #000 15%, #000 80%, transparent); }
+  .tally { gap: 1rem 2rem; }
+  .tally dd { font-size: 2.2rem; }
+}
 
 /* Sections */
 .band { padding: clamp(3.5rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem) 0; max-width: 78rem; margin: 0 auto; }
@@ -236,7 +243,17 @@ a.cal-day:hover::after, a.cal-day:focus-visible::after {
 .specs div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
 .specs dt { color: var(--muted); }
 .specs dd { margin: 0; }
-.machine-text .button { margin-top: 1.5rem; }
+.github-tile {
+  display: grid; gap: 0.35rem; margin-top: 1.5rem; padding: 1rem 1.2rem;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-2);
+  color: var(--ink); text-decoration: none;
+}
+.github-tile:hover { border-color: var(--violet); }
+.github-tile-head { font-weight: 650; }
+.github-tile:hover .github-tile-head { color: var(--violet); }
+.github-tile-time { color: var(--muted); }
+.github-tile-repos { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 0.25rem 1rem; margin-top: 0.4rem; padding-top: 0.6rem; border-top: 1px solid var(--line); font-size: 0.95rem; }
+.github-tile-repos b { font-variant-numeric: tabular-nums; }
 @media (max-width: 820px) {
   .machine { grid-template-columns: 1fr; }
 }

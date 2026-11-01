@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getEntries } from "@/lib/journal";
 import { PHASES } from "@/lib/phases";
 import { formatDate, formatDuration } from "@/lib/markdown";
+import { getCommitCounts } from "@/lib/github";
 import { ContourMap } from "./contour-map";
 import { SessionCalendar } from "./session-calendar";
 
@@ -25,8 +26,10 @@ const SETBACKS = [
   { quote: "1 and a half hours of work for nothing T-T (ok, not for nothing, but nevermind)", context: "Forgetting to record a coding session", href: "/journal/2026-05-26-starting-coding-and-making-takoff" },
 ];
 
-export default function Home() {
+export default async function Home() {
   const entries = getEntries();
+  const repos = await getCommitCounts();
+  const commits = repos.reduce((s, r) => s + r.commits, 0);
   const totalMinutes = entries.reduce((s, e) => s + e.minutes, 0);
   const photos = entries.reduce((s, e) => s + e.images, 0);
 
@@ -61,6 +64,7 @@ export default function Home() {
           <div><dt>hours logged</dt><dd>{Math.round(totalMinutes / 60)}</dd></div>
           <div><dt>sessions</dt><dd>{entries.length}</dd></div>
           <div><dt>photos & screenshots</dt><dd>{photos}</dd></div>
+          {commits > 0 && <div><dt>commits on GitHub</dt><dd>{commits}</dd></div>}
         </dl>
         <p className="hero-hint">Each point on the path is a build session. Point at one to see it.</p>
       </section>
@@ -139,8 +143,16 @@ export default function Home() {
             <div><dt>Landing</dt><dd>AprilTag tracking, self-centring station</dd></div>
             <div><dt>Parts cost</dt><dd>€264.84 including shipping</dd></div>
           </dl>
-          <a className="button quiet" href="https://github.com/Stefanos0710/Odonata" target="_blank" rel="noopener">
-            Code, CAD and PCB files on GitHub
+          <a className="github-tile" href="https://github.com/Stefanos0710/Odonata" target="_blank" rel="noopener">
+            <span className="github-tile-head">Code, CAD and PCB files on GitHub</span>
+            <span className="github-tile-time">{Math.round(totalMinutes / 60)} hours logged</span>
+            {repos.length > 0 && (
+              <span className="github-tile-repos">
+                {repos.map((r) => (
+                  <span key={r.name}><b>{r.commits}</b> commits in {r.name}</span>
+                ))}
+              </span>
+            )}
           </a>
         </div>
       </section>

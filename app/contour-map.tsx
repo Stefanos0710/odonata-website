@@ -28,19 +28,19 @@ const shortDate = (iso: string) =>
 const clip = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
 
 export function ContourMap({ sessions }: { sessions: Waypoint[] }) {
-  const lines = [...hill(1040, 300, 15, 26, 1), ...hill(260, 640, 9, 30, 4), ...hill(820, 820, 6, 34, 7)];
+  const lines = [...hill(1180, 250, 15, 26, 1), ...hill(260, 640, 9, 30, 4), ...hill(820, 820, 6, 34, 7)];
 
-  // Flight path meanders from bottom left to the summit on the right.
+  // Flight path climbs to the summit on the right, clear of the hero text on the left.
   const n = Math.max(sessions.length, 2);
   const way = Array.from({ length: n }, (_, i) => {
     const t = i / (n - 1);
-    return [120 + t * 920 + Math.sin(t * 9) * 40, 690 - t * 390 + Math.sin(t * 13 + 1) * 46] as const;
+    return [1060 + t * 240 + Math.sin(t * 9) * 40, 680 - t * 500 + Math.sin(t * 13 + 1) * 30] as const;
   });
   const path = way.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join("");
   const [lx, ly] = way[n - 1];
 
   return (
-    <svg className="contour-map" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" role="group" aria-label="Flight path: one point per build session">
+    <svg className="contour-map" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMaxYMid slice" role="group" aria-label="Flight path: one point per build session">
       <g className="contours" aria-hidden="true">
         {lines.map((d, i) => (
           <path key={i} d={d} className={i % 5 === 4 ? "index-line" : undefined} />
