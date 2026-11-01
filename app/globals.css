@@ -174,9 +174,13 @@ h3 { font-size: 1.15rem; }
 .cal-day[data-level="3"] { background: color-mix(in oklab, var(--violet) 65%, var(--paper)); }
 .cal-day[data-level="4"] { background: color-mix(in oklab, var(--violet) 82%, var(--paper)); }
 .cal-day[data-level="5"] { background: var(--violet); }
-a.cal-day[data-side="end"]::after { left: auto; right: 0; }
-a.cal-day:hover, a.cal-day:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
-a.cal-day:hover::after, a.cal-day:focus-visible::after {
+.cal-day[data-commits]::before {
+  content: ""; position: absolute; inset: 0; margin: auto; width: 34%; height: 34%; min-width: 4px; min-height: 4px;
+  border-radius: 50%; background: var(--lime);
+}
+.cal-day[data-tip][data-side="end"]::after { left: auto; right: 0; }
+.cal-day[data-tip]:hover, .cal-day[data-tip]:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.cal-day[data-tip]:hover::after, .cal-day[data-tip]:focus-visible::after {
   content: attr(data-tip); position: absolute; z-index: 3; left: 0; bottom: calc(100% + 8px);
   width: max-content; max-width: 18rem; padding: 0.45rem 0.65rem; border-radius: 6px;
   background: var(--ink); color: var(--paper); font-size: 0.85rem; line-height: 1.35; pointer-events: none;

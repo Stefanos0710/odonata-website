@@ -1,28 +1,33 @@
-// Commit counts for the landing page. Private repos need GITHUB_STATS_TOKEN (read-only) or GITHUB_TOKEN with access.
+// Commits for the landing page. Private repos need GITHUB_STATS_TOKEN (read-only) or GITHUB_TOKEN with access.
 const OWNER = "Stefanos0710";
 const TOKEN = process.env.GITHUB_STATS_TOKEN ?? process.env.GITHUB_TOKEN;
+const MAX_PAGES = 20; // ponytail: 2000 commits per repo, raise if a repo outgrows it
 
 export const REPOS = ["Odonata", "Odonata-backup", "Dawnwell-Website", "Dawnwell"];
 
-export type RepoCount = { name: string; commits: number };
+export type RepoCommits = { name: string; dates: string[] };
 
-async function countCommits(repo: string): Promise<number | null> {
+async function commitDates(repo: string): Promise<string[] | null> {
+  const dates: string[] = [];
   try {
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/commits?per_page=1`, {
-      headers: { Accept: "application/vnd.github+json", ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}) },
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return null;
-    // With one commit per page, the page number of rel="last" is the commit count.
-    const last = res.headers.get("link")?.match(/[?&]page=(\d+)>; rel="last"/);
-    return last ? Number(last[1]) : ((await res.json()) as unknown[]).length;
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      const res = await fetch(`https://api.github.com/repos/${OWNER}/${repo}/commits?per_page=100&page=${page}`, {
+        headers: { Accept: "application/vnd.github+json", ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}) },
+        next: { revalidate: 3600 },
+      });
+      if (!res.ok) return page === 1 ? null : dates;
+      const list = (await res.json()) as { commit: { author: { date: string } } }[];
+      dates.push(...list.map((c) => c.commit.author.date));
+      if (list.length < 100) break;
+    }
+    return dates;
   } catch {
     return null;
   }
 }
 
 /** Repos the API could not read (private without a token, renamed, offline) are left out. */
-export async function getCommitCounts(): Promise<RepoCount[]> {
-  const counts = await Promise.all(REPOS.map(async (name) => ({ name, commits: await countCommits(name) })));
-  return counts.filter((c): c is RepoCount => c.commits !== null);
+export async function getCommits(): Promise<RepoCommits[]> {
+  const all = await Promise.all(REPOS.map(async (name) => ({ name, dates: await commitDates(name) })));
+  return all.filter((r): r is RepoCommits => r.dates !== null);
 }

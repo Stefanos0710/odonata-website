@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getEntries } from "@/lib/journal";
 import { PHASES } from "@/lib/phases";
 import { formatDate, formatDuration } from "@/lib/markdown";
-import { getCommitCounts } from "@/lib/github";
+import { getCommits } from "@/lib/github";
 import { ContourMap } from "./contour-map";
 import { SessionCalendar } from "./session-calendar";
 
@@ -28,7 +28,7 @@ const SETBACKS = [
 
 export default async function Home() {
   const entries = getEntries();
-  const repos = await getCommitCounts();
+  const repos = (await getCommits()).map((r) => ({ name: r.name, commits: r.dates.length }));
   const commits = repos.reduce((s, r) => s + r.commits, 0);
   const totalMinutes = entries.reduce((s, e) => s + e.minutes, 0);
   const photos = entries.reduce((s, e) => s + e.images, 0);
