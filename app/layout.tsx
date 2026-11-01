@@ -28,6 +28,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main id="main">{children}</main>
         <footer className="site-footer">
+          <div className="contact">
+            <h2>Questions, ideas, or want to build one too?</h2>
+            <a href="mailto:stefanoskoufogazos@outlook.com">stefanoskoufogazos@outlook.com</a>
+            <a href="https://x.com/Stefanos0710" target="_blank" rel="noopener">@Stefanos0710 on X</a>
+          </div>
           <p>
             Built by Stefanos. Started for <a href="https://fallout.hackclub.com/projects/130">Hack Club Fallout</a>,
             continued for Jugend forscht 2027.

@@ -6,6 +6,7 @@ import { getCommits } from "@/lib/github";
 import { ContourMap } from "./contour-map";
 import { SessionCalendar } from "./session-calendar";
 
+const berlinDay = (iso: string) => new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); // YYYY-MM-DD
 const shortDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Europe/Berlin" });
 
@@ -28,8 +29,14 @@ const SETBACKS = [
 
 export default async function Home() {
   const entries = getEntries();
-  const repos = (await getCommits()).map((r) => ({ name: r.name, commits: r.dates.length }));
-  const commits = repos.reduce((s, r) => s + r.commits, 0);
+  const repoCommits = await getCommits();
+  const commits = repoCommits.reduce((s, r) => s + r.dates.length, 0);
+  const commitsPerDay = new Map<string, number>();
+  for (const r of repoCommits) for (const d of r.dates) {
+    const k = berlinDay(d);
+    commitsPerDay.set(k, (commitsPerDay.get(k) ?? 0) + 1);
+  }
+  const busiest = [...commitsPerDay].reduce<[string, number] | null>((a, b) => (!a || b[1] > a[1] ? b : a), null);
   const totalMinutes = entries.reduce((s, e) => s + e.minutes, 0);
   const photos = entries.reduce((s, e) => s + e.images, 0);
 
@@ -43,7 +50,7 @@ export default async function Home() {
   const spanDays = entries.length
     ? Math.round((Date.parse(entries[entries.length - 1].date) - Date.parse(entries[0].date)) / 86_400_000) + 1
     : 0;
-  const activeDays = new Set(entries.map((e) => new Date(e.date).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }))).size;
+  const activeDays = new Set(entries.map((e) => berlinDay(e.date))).size;
 
   return (
     <>
@@ -66,7 +73,7 @@ export default async function Home() {
           <div><dt>photos & screenshots</dt><dd>{photos}</dd></div>
           {commits > 0 && <div><dt>commits on GitHub</dt><dd>{commits}</dd></div>}
         </dl>
-        <p className="hero-hint">Each point on the path is a build session. Point at one to see it.</p>
+        <p className="hero-hint">Each point on the path is a build session, bigger means longer. Point at one to see it.</p>
       </section>
 
       <section id="build" className="band">
@@ -77,14 +84,28 @@ export default async function Home() {
         <div className="build-overview">
           <SessionCalendar entries={entries} />
           <dl className="build-facts">
-            <div><dt>From first to last session</dt><dd>{spanDays} days</dd></div>
-            <div><dt>Days with a build session</dt><dd>{activeDays} of {spanDays}</dd></div>
-            <div><dt>Average session</dt><dd>{formatDuration(Math.round(totalMinutes / Math.max(entries.length, 1)))}</dd></div>
+            <div>
+              <dt>Built between</dt>
+              <dd>{shortDate(entries[0].date)} – {shortDate(entries[entries.length - 1].date)}</dd>
+              <dd className="fact-note">{activeDays} days at the bench, across {spanDays} days</dd>
+            </div>
+            <div>
+              <dt>Sessions</dt>
+              <dd>{entries.length}</dd>
+              <dd className="fact-note">{formatDuration(Math.round(totalMinutes / Math.max(entries.length, 1)))} on average</dd>
+            </div>
             <div>
               <dt>Longest session</dt>
               <dd>{formatDuration(longest.minutes)}</dd>
               <dd className="fact-note"><Link href={`/journal/${longest.slug}`}>{longest.title}</Link></dd>
             </div>
+            {busiest && (
+              <div>
+                <dt>Commits on GitHub</dt>
+                <dd>{commits}</dd>
+                <dd className="fact-note">Most in one day: {busiest[1]}, on {shortDate(busiest[0] + "T12:00:00Z")}</dd>
+              </div>
+            )}
           </dl>
         </div>
         <ol className="phases">
@@ -145,14 +166,9 @@ export default async function Home() {
           </dl>
           <a className="github-tile" href="https://github.com/Stefanos0710/Odonata" target="_blank" rel="noopener">
             <span className="github-tile-head">Code, CAD and PCB files on GitHub</span>
-            <span className="github-tile-time">{Math.round(totalMinutes / 60)} hours logged</span>
-            {repos.length > 0 && (
-              <span className="github-tile-repos">
-                {repos.map((r) => (
-                  <span key={r.name}><b>{r.commits}</b> commits in {r.name}</span>
-                ))}
-              </span>
-            )}
+            <span className="github-tile-time">
+              {Math.round(totalMinutes / 60)} hours logged{commits > 0 && <>, {commits} commits</>}
+            </span>
           </a>
         </div>
       </section>

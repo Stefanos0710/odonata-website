@@ -25,6 +25,18 @@ function hill(cx: number, cy: number, rings: number, step: number, seed: number)
 
 const shortDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Europe/Berlin" });
+// Catmull-Rom spline through the waypoints, as cubic Béziers, so the path bends instead of zig-zagging.
+function smooth(pts: readonly (readonly [number, number])[]) {
+  const p = (i: number) => pts[Math.min(Math.max(i, 0), pts.length - 1)];
+  let d = `M${p(0)[0].toFixed(1)},${p(0)[1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const [a, b, c, e] = [p(i - 1), p(i), p(i + 1), p(i + 2)];
+    const c1 = [b[0] + (c[0] - a[0]) / 6, b[1] + (c[1] - a[1]) / 6];
+    const c2 = [c[0] - (e[0] - b[0]) / 6, c[1] - (e[1] - b[1]) / 6];
+    d += `C${c1.map((v) => v.toFixed(1))} ${c2.map((v) => v.toFixed(1))} ${c[0].toFixed(1)},${c[1].toFixed(1)}`;
+  }
+  return d;
+}
 const clip = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
 
 export function ContourMap({ sessions }: { sessions: Waypoint[] }) {
@@ -34,10 +46,12 @@ export function ContourMap({ sessions }: { sessions: Waypoint[] }) {
   const n = Math.max(sessions.length, 2);
   const way = Array.from({ length: n }, (_, i) => {
     const t = i / (n - 1);
-    return [1060 + t * 240 + Math.sin(t * 9) * 40, 680 - t * 500 + Math.sin(t * 13 + 1) * 30] as const;
+    return [1040 + t * 270 + Math.sin(t * 7) * 50, 690 - t * 510 + Math.sin(t * 11 + 1) * 22] as const;
   });
-  const path = way.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join("");
+  const path = smooth(way);
+  const [fx, fy] = way[0];
   const [lx, ly] = way[n - 1];
+  const longest = Math.max(...sessions.map((s) => s.minutes), 1);
 
   return (
     <svg className="contour-map" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMaxYMid slice" role="group" aria-label="Flight path: one point per build session">
@@ -46,8 +60,18 @@ export function ContourMap({ sessions }: { sessions: Waypoint[] }) {
           <path key={i} d={d} className={i % 5 === 4 ? "index-line" : undefined} />
         ))}
       </g>
+      <defs>
+        <linearGradient id="flight-gradient" gradientUnits="userSpaceOnUse" x1={fx} y1={fy} x2={lx} y2={ly}>
+          <stop offset="0" stopColor="var(--violet)" />
+          <stop offset="1" stopColor="var(--lime)" />
+        </linearGradient>
+      </defs>
+      <path d={path} className="flight-glow" pathLength={1} aria-hidden="true" />
       <path d={path} className="flight-path" pathLength={1} aria-hidden="true" />
-      <circle cx={lx} cy={ly} r={9} className="here" aria-hidden="true" />
+      <g className="here" aria-hidden="true">
+        <circle cx={lx} cy={ly} r={9} className="here-pulse" />
+        <circle cx={lx} cy={ly} r={7} className="here-dot" />
+      </g>
       <g className="waypoints">
         {sessions.map((s, i) => {
           const [x, y] = way[i];
@@ -60,9 +84,9 @@ export function ContourMap({ sessions }: { sessions: Waypoint[] }) {
           return (
             <a key={s.slug} href={`/journal/${s.slug}`} className="wp" aria-label={`Session ${i + 1}: ${s.title}`}>
               <circle cx={x} cy={y} r={16} className="hit" />
-              <circle cx={x} cy={y} r={3.4} className="dot" style={{ animationDelay: `${0.4 + (i / n) * 2.2}s` }} />
+              <circle cx={x} cy={y} r={(2.6 + (s.minutes / longest) * 3.4).toFixed(1)} className="dot" style={{ animationDelay: `${0.4 + (i / n) * 2.2}s` }} />
               <g className="tip" aria-hidden="true">
-                <rect x={bx} y={by} width={w} height={50} rx={6} />
+                <rect x={bx} y={by} width={w} height={50} rx={8} />
                 <text x={bx + 14} y={by + 21} className="tip-title">{title}</text>
                 <text x={bx + 14} y={by + 39} className="tip-meta">{meta}</text>
               </g>

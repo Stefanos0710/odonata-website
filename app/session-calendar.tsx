@@ -3,10 +3,12 @@ import type { Entry } from "@/lib/journal";
 import { formatDuration } from "@/lib/markdown";
 import { getCommits } from "@/lib/github";
 
-// One square per day, darker = more hours, a dot = commits on GitHub. Days with a session link to its entry.
+// One square per day, darker = more hours; a lime dot = commits on GitHub, bigger = more. Days with a session link to its entry.
 const dayKey = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); // YYYY-MM-DD
 const STEPS = [60, 120, 180, 240]; // minutes: under 1 h, 1–2 h, 2–3 h, 3–4 h, 4 h+
 const level = (m: number) => (m ? STEPS.filter((s) => m >= s).length + 1 : 0);
+const COMMIT_STEPS = [3, 6, 10]; // commits: 1–2, 3–5, 6–9, 10+
+const commitLevel = (n: number) => COMMIT_STEPS.filter((s) => n >= s).length + 1;
 
 export async function SessionCalendar({ entries }: { entries: Entry[] }) {
   if (!entries.length) return null;
@@ -38,6 +40,20 @@ export async function SessionCalendar({ entries }: { entries: Entry[] }) {
     .filter(({ d, i }) => i % 7 === 0 && (i === 0 || d.getUTCDate() <= 7))
     .map(({ d, i }) => ({ col: i / 7 + 1, label: d.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }) }));
 
+  const cells = days.map((d, i) => {
+    const list = byDay.get(dayKey(d)) ?? [];
+    return {
+      list,
+      minutes: list.reduce((s, e) => s + e.minutes, 0),
+      commits: commitsByDay.get(dayKey(d)) ?? 0,
+      date: d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "long", timeZone: "UTC" }),
+      col: Math.floor(i / 7) + 2,
+      row: (i % 7) + 2,
+      side: Math.floor(i / 7) + 1 > weeks / 2 ? "end" : undefined,
+    };
+  });
+  const showCommits = commitDays.length > 0;
+
   return (
     <figure className="calendar">
       <div className="cal-grid" style={{ "--weeks": weeks } as React.CSSProperties}>
@@ -47,35 +63,33 @@ export async function SessionCalendar({ entries }: { entries: Entry[] }) {
         {["Mon", "", "Wed", "", "Fri", "", "Sun"].map((d, r) => (
           <span key={r} className="cal-weekday" style={{ gridRow: r + 2 }}>{d}</span>
         ))}
-        {days.map((d, i) => {
-          const list = byDay.get(dayKey(d)) ?? [];
-          const commits = commitsByDay.get(dayKey(d)) ?? 0;
-          const commitNote = commits ? `${commits} ${commits === 1 ? "commit" : "commits"}` : "";
-          const minutes = list.reduce((s, e) => s + e.minutes, 0);
-          const date = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "long", timeZone: "UTC" });
-          const style = { gridColumn: Math.floor(i / 7) + 2, gridRow: (i % 7) + 2 };
-          const side = Math.floor(i / 7) + 1 > weeks / 2 ? "end" : undefined;
-          if (!list.length) {
-            if (!commits) return <span key={i} className="cal-day" data-level={0} style={style} />;
-            const tip = `${date}: ${commitNote}`;
-            return <span key={i} className="cal-day" data-level={0} data-commits style={style} tabIndex={0} aria-label={tip} data-tip={tip} data-side={side} />;
-          }
-          const tip = `${date}: ${formatDuration(minutes)}${commits ? `, ${commitNote}` : ""}, ${list.map((e) => e.title).join(" / ")}`;
-          return (
-            <Link key={i} href={`/journal/${list[0].slug}`} className="cal-day" data-level={level(minutes)} data-commits={commits ? "" : undefined} style={style} aria-label={tip} data-tip={tip} data-side={side} />
-          );
+        {cells.map((c, i) => {
+          const style = { gridColumn: c.col, gridRow: c.row };
+          const commits = c.commits ? commitLevel(c.commits) : undefined;
+          if (!c.list.length && !c.commits) return <span key={i} className="cal-day" data-level={0} style={style} />;
+          const tip = [
+            c.date + ":",
+            c.list.length && formatDuration(c.minutes) + (c.commits ? "," : ""),
+            c.commits && `${c.commits} ${c.commits === 1 ? "commit" : "commits"}`,
+            c.list.length && "— " + c.list.map((e) => e.title).join(" / "),
+          ].filter(Boolean).join(" ");
+          const props = { className: "cal-day", "data-level": level(c.minutes), "data-commits": commits, style, "aria-label": tip, "data-tip": tip, "data-side": c.side };
+          return c.list.length
+            ? <Link key={i} href={`/journal/${c.list[0].slug}`} {...props} />
+            : <span key={i} tabIndex={0} {...props} />;
         })}
       </div>
       <figcaption className="cal-legend">
-        <span>Time worked per day</span>
         <span className="cal-scale" aria-hidden="true">
-          less
+          Time worked
           {[1, 2, 3, 4, 5].map((l) => <span key={l} className="cal-day" data-level={l} />)}
           4 h+
         </span>
-        {commitDays.length > 0 && (
+        {showCommits && (
           <span className="cal-scale" aria-hidden="true">
-            <span className="cal-day" data-level={0} data-commits /> commits on GitHub
+            Commits
+            {[1, 2, 3, 4].map((l) => <span key={l} className="cal-day" data-level={0} data-commits={l} />)}
+            10+
           </span>
         )}
       </figcaption>
