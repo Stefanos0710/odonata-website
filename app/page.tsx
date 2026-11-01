@@ -90,14 +90,14 @@ export default async function Home() {
             I&rsquo;m Stefanos, a student from Bavaria, and I build Odonata myself, from CAD and PCB to code.
             In 2026 I became state winner in Bavaria (Landessieger) at Jugend forscht junior
             with <a href="https://signai.dev" target="_blank" rel="noopener">SignAI</a>, won Hack Club&rsquo;s
-            Moonshot, and took part in <a href="https://fallout.hackclub.com/projects/130" target="_blank" rel="noopener">Fallout</a> in
+            <a href="https://moonshot.hackclub.com" target="_blank" rel="noopener">Moonshot</a>, and took part in <a href="https://fallout.hackclub.com/projects/130" target="_blank" rel="noopener">Fallout</a> in
             Shenzhen.
           </p>
         </div>
         <ul className="about-facts">
           <li><strong>Landessieger Bayern 2026</strong><span>Jugend forscht junior, with <a href="https://signai.dev" target="_blank" rel="noopener">SignAI</a></span></li>
-          <li><strong>Winner, Hack Club Moonshot</strong><span>Hack Club hackathon</span></li>
-          <li><strong>Hack Club Fallout</strong><span>Shenzhen, with Odonata v1 as my project</span></li>
+          <li><strong>Winner, <a href="https://moonshot.hackclub.com" target="_blank" rel="noopener">Hack Club Moonshot</a></strong><span>Hack Club hackathon</span></li>
+          <li><strong><a href="https://fallout.hackclub.com/projects/130" target="_blank" rel="noopener">Hack Club Fallout</a></strong><span>Shenzhen, with Odonata v1 as my project</span></li>
         </ul>
       </section>
 
