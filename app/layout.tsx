@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Archivo, Newsreader } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { CONTACT_EMAIL, SHARE_IMAGE, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Code, CAD and PCB files are on <a href="https://github.com/Stefanos0710/Odonata">GitHub</a>.
           </p>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
