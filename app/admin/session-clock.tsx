@@ -48,7 +48,10 @@ export function SessionClock() {
   const ms = s.acc + (s.start ? Math.max(0, now - s.start) : 0);
   const sec = Math.floor(ms / 1000);
   const running = s.start !== null;
-  const text = ready ? `${pad(Math.floor(sec / 3600))}:${pad(Math.floor(sec / 60) % 60)}:${pad(sec % 60)}` : "--:--:--";
+  const hm = ready ? `${pad(Math.floor(sec / 3600))}:${pad(Math.floor(sec / 60) % 60)}` : "--:--";
+  const ss = ready ? pad(sec % 60) : "--";
+  const text = `${hm}:${ss}`;
+  const state = running ? "running" : ms ? "paused" : "idle";
 
   // Show the time in the browser tab too, so it is visible from any other window.
   useEffect(() => {
@@ -58,16 +61,25 @@ export function SessionClock() {
   }, [running, text]);
 
   return (
-    <div className="session-clock" data-running={running} aria-label="Session clock">
-      <div className="clock-face" style={{ "--sec": (ms % 60_000) / 60_000 } as React.CSSProperties}>
-        <time role="timer" dateTime={`PT${sec}S`}>{text}</time>
+    <div className="session-clock" data-state={state} role="group" aria-label="Session clock"
+      style={{ "--sec": (ms % 60_000) / 60_000 } as React.CSSProperties}>
+      <span className="clock-dot" aria-hidden="true" />
+      <div className="clock-read">
+        <span className="clock-label">{running ? "Working" : ms ? "Paused" : "Session clock"}</span>
+        <time role="timer" dateTime={`PT${sec}S`}>{hm}<small>:{ss}</small></time>
       </div>
-      <div className="clock-buttons">
-        <button type="button" className="tool" onClick={() => set(running ? { start: null, acc: ms } : { start: Date.now(), acc: s.acc })}>
-          {running ? "Pause" : s.acc ? "Resume" : "Start working"}
+      {state === "paused" && (
+        <button type="button" className="clock-btn quiet" aria-label="Reset clock" title="Reset" onClick={() => set({ start: null, acc: 0 })}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" /></svg>
         </button>
-        {!running && s.acc > 0 && <button type="button" className="tool" onClick={() => set({ start: null, acc: 0 })}>Reset</button>}
-      </div>
+      )}
+      <button type="button" className="clock-btn" aria-label={running ? "Pause" : ms ? "Resume" : "Start working"} title={running ? "Pause" : ms ? "Resume" : "Start working"}
+        onClick={() => set(running ? { start: null, acc: ms } : { start: Date.now(), acc: s.acc })}>
+        {running
+          ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12" /></svg>
+          : <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" className="fill" /></svg>}
+      </button>
+      <span className="clock-tick" aria-hidden="true" />
     </div>
   );
 }

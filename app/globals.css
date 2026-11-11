@@ -483,14 +483,40 @@ h3 { font-size: 1.15rem; }
 .duration input { width: 4.8rem; }
 @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
 .duration > button { margin-top: 0.5rem; }
-.session-clock { position: fixed; right: 1rem; bottom: 1rem; z-index: 50; display: flex; align-items: center; gap: 0.9rem; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-2); box-shadow: 0 6px 24px rgb(0 0 0 / 0.15); }
-.session-clock[data-running="true"] { border-color: var(--lime); }
-.clock-face { --size: 6.2rem; width: var(--size); height: var(--size); border-radius: 50%; display: grid; place-items: center;
-  background: conic-gradient(var(--lime) calc(var(--sec) * 360deg), var(--line) 0); position: relative; }
-.clock-face::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--paper); }
-.clock-face time { position: relative; font-variant-numeric: tabular-nums; font-size: 1.05rem; font-weight: 650; }
-.clock-buttons { display: flex; flex-direction: column; gap: 0.4rem; }
-@media (max-width: 640px) { .clock-face { --size: 4.8rem; } .clock-face time { font-size: 0.8rem; } }
+/* Session clock: a dark instrument pill, lime when the clock runs. */
+.session-clock {
+  --bg: #15302a; --fg: #eef1ea; --dim: #9fb3a8;
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 50; overflow: hidden;
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0.55rem 0.55rem 1rem;
+  background: var(--bg); color: var(--fg); border-radius: 999px;
+  box-shadow: 0 10px 30px -8px rgb(0 0 0 / 0.45), inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+@media (prefers-color-scheme: dark) { .session-clock { --bg: #1d332c; } }
+.clock-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--dim); flex: none; }
+.session-clock[data-state="running"] .clock-dot { background: var(--lime); box-shadow: 0 0 0 0 rgb(122 214 90 / 0.6); animation: clock-pulse 2s infinite; }
+.session-clock[data-state="paused"] .clock-dot { background: #e0b35a; }
+@keyframes clock-pulse { 70% { box-shadow: 0 0 0 0.45rem rgb(122 214 90 / 0); } 100% { box-shadow: 0 0 0 0 rgb(122 214 90 / 0); } }
+.clock-read { display: flex; flex-direction: column; line-height: 1.05; min-width: 5.6rem; }
+.clock-label { font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
+.clock-read time { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.clock-read small { font-size: 0.95rem; font-weight: 500; color: var(--dim); }
+.session-clock[data-state="idle"] .clock-read time { color: var(--dim); }
+.clock-btn {
+  width: 2.6rem; height: 2.6rem; flex: none; border-radius: 50%; border: 0; cursor: pointer;
+  display: grid; place-items: center; background: var(--lime); color: #15302a; transition: transform 0.15s, background 0.15s;
+}
+.clock-btn:hover { transform: scale(1.07); }
+.clock-btn:active { transform: scale(0.95); }
+.clock-btn svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.clock-btn svg .fill { fill: currentColor; stroke-width: 1.5; }
+.clock-btn.quiet { width: 2.1rem; height: 2.1rem; background: rgb(255 255 255 / 0.08); color: var(--fg); }
+.clock-btn.quiet:hover { background: rgb(255 255 255 / 0.16); }
+.clock-btn.quiet svg { width: 1rem; height: 1rem; stroke-width: 2.2; }
+.session-clock[data-state="running"] .clock-btn:not(.quiet) { background: var(--fg); }
+.clock-tick { position: absolute; left: 0; bottom: 0; height: 2px; width: calc(var(--sec) * 100%); background: var(--lime); opacity: 0; transition: opacity 0.3s; }
+.session-clock[data-state="running"] .clock-tick { opacity: 0.9; }
+@media (prefers-reduced-motion: reduce) { .session-clock .clock-dot { animation: none; } .clock-btn { transition: none; } }
+@media (max-width: 640px) { .session-clock { right: 0.75rem; bottom: 0.75rem; } .clock-read time { font-size: 1.25rem; } }
 .editor { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .editor-bar { display: flex; gap: 0.25rem; padding: 0.4rem; background: var(--paper-2); border-bottom: 1px solid var(--line); }
 .editor-bar button { font: 500 0.95rem var(--sans); color: var(--ink); background: transparent; border: 0; padding: 0.45rem 0.8rem; border-radius: 4px; cursor: pointer; }
