@@ -1,5 +1,6 @@
 "use client";
 
+import { clockMinutes } from "./session-clock";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -355,6 +356,9 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
               min
             </label>
           </div>
+          <button type="button" className="tool" onClick={() => { const m = clockMinutes(); edit(setHours)(String(Math.floor(m / 60))); edit(setMins)(String(m % 60)); }}>
+            Use clock time
+          </button>
         </fieldset>
         <label>
           Phase

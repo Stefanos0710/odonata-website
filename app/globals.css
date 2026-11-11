@@ -482,6 +482,15 @@ h3 { font-size: 1.15rem; }
 .duration label { flex-direction: row; align-items: center; gap: 0.35rem; font-weight: 400; }
 .duration input { width: 4.8rem; }
 @media (max-width: 640px) { .field-row { grid-template-columns: 1fr; } }
+.duration > button { margin-top: 0.5rem; }
+.session-clock { position: fixed; right: 1rem; bottom: 1rem; z-index: 50; display: flex; align-items: center; gap: 0.9rem; padding: 0.7rem 0.9rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-2); box-shadow: 0 6px 24px rgb(0 0 0 / 0.15); }
+.session-clock[data-running="true"] { border-color: var(--lime); }
+.clock-face { --size: 6.2rem; width: var(--size); height: var(--size); border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--lime) calc(var(--sec) * 360deg), var(--line) 0); position: relative; }
+.clock-face::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: var(--paper); }
+.clock-face time { position: relative; font-variant-numeric: tabular-nums; font-size: 1.05rem; font-weight: 650; }
+.clock-buttons { display: flex; flex-direction: column; gap: 0.4rem; }
+@media (max-width: 640px) { .clock-face { --size: 4.8rem; } .clock-face time { font-size: 0.8rem; } }
 .editor { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .editor-bar { display: flex; gap: 0.25rem; padding: 0.4rem; background: var(--paper-2); border-bottom: 1px solid var(--line); }
 .editor-bar button { font: 500 0.95rem var(--sans); color: var(--ink); background: transparent; border: 0; padding: 0.45rem 0.8rem; border-radius: 4px; cursor: pointer; }
