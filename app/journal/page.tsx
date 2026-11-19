@@ -47,7 +47,7 @@ export default function JournalIndex() {
                   <span className="entry-main">
                     <span className="entry-title">{e.title}</span>
                     <span className="entry-meta">
-                      {formatDate(e.date)}, {formatDuration(e.minutes)}
+                      {formatDate(e.date, e.endDate)},{formatDuration(e.minutes)}
                       {e.images > 0 && `, ${e.images} ${e.images === 1 ? "image" : "images"}`}
                     </span>
                     <span className="entry-bar" style={{ "--w": e.minutes / longest } as React.CSSProperties} />

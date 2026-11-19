@@ -14,6 +14,7 @@ type Initial = {
   originalSlug?: string;
   title?: string;
   date: string;
+  endDate?: string;
   minutes?: number;
   phase?: string;
   cover?: string;
@@ -21,6 +22,8 @@ type Initial = {
   body?: string;
 };
 
+const MAX_ZIP_MB = 100;
+const MAX_ZIP_IMAGES = 40;
 const MAX_VIDEO_MB = 500;
 const VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime", "video/x-m4v"];
 
@@ -68,11 +71,13 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
   const textarea = useRef<HTMLTextAreaElement>(null);
   const photoInput = useRef<HTMLInputElement>(null);
   const videoInput = useRef<HTMLInputElement>(null);
+  const zipInput = useRef<HTMLInputElement>(null);
   const key = draftKey(initial.originalSlug);
 
   const [folder, setFolder] = useState(initialFolder);
   const [title, setTitle] = useState(initial.title ?? "");
   const [date, setDate] = useState(initial.date);
+  const [endDate, setEndDate] = useState(initial.endDate ?? "");
   const [hours, setHours] = useState(String(Math.floor((initial.minutes ?? 0) / 60)));
   const [mins, setMins] = useState(String((initial.minutes ?? 0) % 60));
   const [phase, setPhase] = useState(initial.phase ?? PHASES[PHASES.length - 1].id);
@@ -94,7 +99,7 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
 
   // Always holds the newest values, so the page-hide handler can save without stale data.
   const latest = useRef<Draft>(null as unknown as Draft);
-  latest.current = { folder, originalSlug: initial.originalSlug, title, date, hours, mins, phase, cover, recordings, body, uploads, savedAt: 0 };
+  latest.current = { folder, originalSlug: initial.originalSlug, title, date, endDate, hours, mins, phase, cover, recordings, body, uploads, savedAt: 0 };
   const dirtyRef = useRef(false);
   dirtyRef.current = dirty;
 
@@ -105,6 +110,7 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
       setFolder(d.folder);
       setTitle(d.title);
       setDate(d.date);
+      setEndDate(d.endDate ?? "");
       setHours(d.hours);
       setMins(d.mins);
       setPhase(d.phase);
@@ -135,7 +141,7 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
     const t = setTimeout(persist, 400);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, dirty, folder, title, date, hours, mins, phase, cover, recordings, body, uploads]);
+  }, [ready, dirty, folder, title, date, endDate, hours, mins, phase, cover, recordings, body, uploads]);
 
   useEffect(() => {
     const flush = () => document.visibilityState !== "visible" && persist();
@@ -195,7 +201,7 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
   const fail = (err: unknown, fallback: string) => setStatus({ kind: "error", text: err instanceof Error ? err.message : fallback });
   const caption = (file: File) => file.name.replace(/\.\w+$/, "").replace(/[-_]/g, " ");
 
-  async function addPhoto(file: File) {
+  async function uploadPhoto(file: File) {
     const small = await shrink(file);
     const form = new FormData();
     form.set("file", small);
@@ -205,7 +211,64 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
     setLocalPreviews((p) => ({ ...p, [res.url]: URL.createObjectURL(small) }));
     void putMedia(res.url, small);
     setCover((c) => c || res.url);
-    insert(`![${caption(file)}](${res.url})`);
+    return res.url;
+  }
+
+  async function addPhoto(file: File) {
+    insert(`![${caption(file)}](${await uploadPhoto(file)})`);
+  }
+
+  // Zip format: images (JPG, PNG, WebP, GIF, in any folder) plus an optional .md file.
+  // With a .md, its text becomes the entry text and `![alt](photo.jpg)` links are matched to the zip's images by
+  // file name. Images the text doesn't mention are added at the end. Without a .md, all images are added in
+  // file-name order (1, 2, 10 sorts numerically).
+  async function addZip(file: File) {
+    if (file.size > MAX_ZIP_MB * 1024 * 1024) throw new Error(`${file.name} is larger than ${MAX_ZIP_MB} MB.`);
+    const { unzipSync, strFromU8 } = await import("fflate");
+    const isImage = (n: string) => /\.(jpe?g|png|webp|gif)$/i.test(n);
+    const isNote = (n: string) => /\.md$/i.test(n);
+    const entries = Object.entries(
+      unzipSync(new Uint8Array(await file.arrayBuffer()), {
+        filter: (f) => !/(^|\/)(__MACOSX\/|\.)/.test(f.name) && (isImage(f.name) || isNote(f.name)) && f.originalSize < 30 * 1024 * 1024,
+      }),
+    );
+    const base = (n: string) => n.split("/").pop()!.toLowerCase();
+    const images = entries.filter(([n]) => isImage(n)).sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }));
+    const note = entries.find(([n]) => isNote(n));
+    if (!images.length) throw new Error(`${file.name} has no JPG, PNG, WebP or GIF images in it.`);
+    if (images.length > MAX_ZIP_IMAGES) throw new Error(`${file.name} has ${images.length} images; the limit is ${MAX_ZIP_IMAGES} per zip.`);
+
+    const uploaded = new Map<string, { file: File; url: string }>();
+    const failed: string[] = [];
+    for (const [name, bytes] of images) {
+      const ext = name.split(".").pop()!.toLowerCase();
+      const img = new File([bytes as BlobPart], base(name), { type: ext === "jpg" ? "image/jpeg" : `image/${ext === "jpeg" ? "jpeg" : ext}` });
+      try {
+        uploaded.set(base(name), { file: img, url: await uploadPhoto(img) });
+      } catch (err) {
+        failed.push(`${base(name)}: ${err instanceof Error ? err.message : "upload failed"}`);
+      }
+    }
+
+    const md = (i: { file: File; url: string }) => `![${caption(i.file)}](${i.url})`;
+    const used = new Set<string>();
+    let text = "";
+    if (note) {
+      text = strFromU8(note[1])
+        .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "") // drop front matter
+        .replace(/(!\[[^\]]*\]\()([^)\s]+)/g, (m, open, link) => {
+          let key = link;
+          try { key = decodeURIComponent(link); } catch {}
+          const hit = uploaded.get(base(key));
+          if (!hit) return m;
+          used.add(base(key));
+          return open + hit.url;
+        })
+        .trim();
+    }
+    const rest = [...uploaded].filter(([k]) => !used.has(k)).map(([, i]) => md(i));
+    insert([text, ...rest].filter(Boolean).join("\n\n"));
+    if (failed.length) throw new Error(`Some images could not be uploaded: ${failed.join("; ")}`);
   }
 
   async function addVideo(file: File) {
@@ -234,13 +297,14 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
   }
 
   async function addFiles(files: Iterable<File>) {
-    const list = [...files].filter((f) => f.type.startsWith("image/") || f.type.startsWith("video/"));
+    const isZip = (f: File) => /\.zip$/i.test(f.name);
+    const list = [...files].filter((f) => isZip(f) || f.type.startsWith("image/") || f.type.startsWith("video/"));
     if (!list.length) return;
     setStatus(null);
     setUploading((n) => n + list.length);
     for (const file of list) {
       try {
-        await (file.type.startsWith("video/") ? addVideo(file) : addPhoto(file));
+        await (isZip(file) ? addZip(file) : file.type.startsWith("video/") ? addVideo(file) : addPhoto(file));
       } catch (err) {
         fail(err, `Upload of ${file.name} failed.`);
       } finally {
@@ -268,7 +332,7 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
       const minutes = (Number(hours) || 0) * 60 + (Number(mins) || 0);
       const res = await saveEntry({
         originalSlug: initial.originalSlug,
-        title, date, minutes, phase,
+        title, date, endDate: endDate || undefined, minutes, phase,
         cover: cover && photos.includes(cover) ? cover : photos[0],
         recordings: recordings.split("\n"),
         body,
@@ -344,6 +408,10 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
           Date
           <input type="date" value={date} onChange={(e) => edit(setDate)(e.target.value)} required />
         </label>
+        <label>
+          To (optional)
+          <input type="date" value={endDate} min={date} onChange={(e) => edit(setEndDate)(e.target.value)} />
+        </label>
         <fieldset className="duration">
           <legend>Time worked</legend>
           <div>
@@ -377,6 +445,15 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
             <button
               type="button"
               className="tool"
+              onClick={() => zipInput.current?.click()}
+              disabled={busy}
+              title="A .zip of images, optionally with one .md file whose ![alt](photo.jpg) links point at the images by file name"
+            >
+              Add zip
+            </button>
+            <button
+              type="button"
+              className="tool"
               onClick={() => videoInput.current?.click()}
               disabled={busy || videoMode === "none"}
               title={videoMode === "none" ? "Video upload isn't set up yet. Use “Embed video link”." : `MP4, WebM or MOV, up to ${MAX_VIDEO_MB} MB`}
@@ -386,6 +463,7 @@ export function EntryForm({ folder: initialFolder, initial, videoMode }: { folde
             <button type="button" className="tool" onClick={embedLink}>Embed video link</button>
           </span>
           <input ref={photoInput} type="file" accept="image/*" multiple hidden onChange={(e) => { addFiles(e.target.files ?? []); e.target.value = ""; }} />
+          <input ref={zipInput} type="file" accept=".zip,application/zip" hidden onChange={(e) => { addFiles(e.target.files ?? []); e.target.value = ""; }} />
           <input ref={videoInput} type="file" accept="video/mp4,video/webm,video/quicktime,video/x-m4v" hidden onChange={(e) => { addFiles(e.target.files ?? []); e.target.value = ""; }} />
         </div>
         {tab === "write" ? (

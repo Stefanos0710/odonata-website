@@ -76,6 +76,7 @@ export type EntryInput = {
   originalSlug?: string;
   title: string;
   date: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD, optional: last day when the work spanned several days
   minutes: number;
   phase: string;
   cover?: string;
@@ -89,6 +90,7 @@ export async function saveEntry(input: EntryInput) {
   const title = input.title.trim();
   if (!title) throw new Error("Add a title.");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.date)) throw new Error("Pick a date.");
+  if (input.endDate && (!/^\d{4}-\d{2}-\d{2}$/.test(input.endDate) || input.endDate < input.date)) throw new Error("The end date can't be before the start date.");
   if (!Number.isFinite(input.minutes) || input.minutes < 0 || input.minutes > 24 * 60) throw new Error("Time worked must be between 0 and 24 hours.");
   if (!PHASES.some((p) => p.id === input.phase)) throw new Error("Pick a phase.");
   const recordings = input.recordings.map((r) => r.trim()).filter(Boolean);
@@ -111,6 +113,7 @@ export async function saveEntry(input: EntryInput) {
     minutes: Math.round(input.minutes),
     phase: input.phase,
   };
+  if (input.endDate && input.endDate > input.date) data.endDate = new Date(input.endDate + "T18:00:00.000Z");
   if (input.cover) data.cover = input.cover;
   if (recordings.length) data.recordings = recordings;
 

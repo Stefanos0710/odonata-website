@@ -38,7 +38,7 @@ export default async function Admin() {
             <Link href={`/admin/edit/${e.slug}`}>
               <span className="entry-title">{e.title}</span>
               <span className="entry-meta">
-                {formatDate(e.date)}, {formatDuration(e.minutes)}, {phaseLabel(e.phase)}
+                {formatDate(e.date, e.endDate)},{formatDuration(e.minutes)}, {phaseLabel(e.phase)}
               </span>
             </Link>
           </li>

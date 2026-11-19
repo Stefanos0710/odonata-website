@@ -7,6 +7,7 @@ export type Entry = {
   slug: string;
   title: string;
   date: string; // ISO
+  endDate?: string; // ISO, set when the work spanned several days
   minutes: number;
   phase: string;
   cover?: string;
@@ -24,6 +25,7 @@ function read(file: string): Entry {
     slug: file.replace(/\.md$/, ""),
     title: String(data.title ?? "Untitled"),
     date: new Date(data.date).toISOString(),
+    endDate: data.endDate ? new Date(data.endDate).toISOString() : undefined,
     minutes: Number(data.minutes) || 0,
     phase: String(data.phase ?? "research"),
     cover: data.cover || undefined,

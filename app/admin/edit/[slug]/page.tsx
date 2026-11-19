@@ -20,6 +20,7 @@ export default async function EditEntry({ params }: { params: Promise<{ slug: st
           originalSlug: entry.slug,
           title: entry.title,
           date: new Date(entry.date).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }),
+          endDate: entry.endDate && new Date(entry.endDate).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }),
           minutes: entry.minutes,
           phase: entry.phase,
           cover: entry.cover,

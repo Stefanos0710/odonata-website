@@ -301,7 +301,7 @@ export default async function Home() {
             <li key={e.slug}>
               <Link href={`/journal/${e.slug}`}>
                 {e.cover && <img src={e.cover} alt={`Cover photo: ${e.title}`} loading="lazy" />}
-                <span className="card-meta">{formatDate(e.date)}, {formatDuration(e.minutes)}</span>
+                <span className="card-meta">{formatDate(e.date, e.endDate)},{formatDuration(e.minutes)}</span>
                 <span className="card-title">{e.title}</span>
               </Link>
             </li>

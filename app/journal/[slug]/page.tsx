@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const entry = getEntry((await params).slug);
   if (!entry) return {};
   // Nested openGraph replaces the root one entirely, so repeat what the card needs.
-  const description = `Session from the Odonata build journal: ${formatDuration(entry.minutes)} of work on ${formatDate(entry.date)}.`;
+  const description = `Session from the Odonata build journal: ${formatDuration(entry.minutes)} of work on ${formatDate(entry.date, entry.endDate)}.`;
   const images = entry.cover ? [{ url: entry.cover, alt: entry.title }] : [SHARE_IMAGE];
   return {
     title: entry.title,
@@ -45,7 +45,7 @@ export default async function EntryPage({ params }: Props) {
         <h1>{entry.title}</h1>
         <dl className="entry-facts">
           <div><dt>Session</dt><dd>{i + 1} of {all.length}</dd></div>
-          <div><dt>Date</dt><dd>{formatDate(entry.date)}</dd></div>
+          <div><dt>{entry.endDate ? "Dates" : "Date"}</dt><dd>{formatDate(entry.date, entry.endDate)}</dd></div>
           <div><dt>Time worked</dt><dd>{formatDuration(entry.minutes)}</dd></div>
           <div><dt>Reading time</dt><dd>{Math.max(1, Math.round(words / 220))} min</dd></div>
           {entry.images > 0 && <div><dt>Images</dt><dd>{entry.images}</dd></div>}

@@ -47,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="contact">
             <h2>Questions, ideas, or want to build one too?</h2>
             <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-            <a href="https://x.com/Stefanos0710" target="_blank" rel="noopener">@Stefanos0710 on X</a>
+            <a href="https://github.com/Stefanos0710" target="_blank" rel="noopener">@Stefanos0710 on GitHub</a>
           </div>
           <p>
             Built by <Link href="/#about">Stefanos</Link>. Started for <a href="https://fallout.hackclub.com/projects/130">Hack Club Fallout</a>,

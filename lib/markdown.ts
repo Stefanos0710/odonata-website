@@ -45,5 +45,12 @@ export function formatDuration(minutes: number) {
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 
-export const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" });
+const DATE_FMT = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" });
+
+/** "3 November 2026", or "3–5 November 2026" when an end date on a later day is given. */
+export function formatDate(iso: string, endIso?: string) {
+  const start = new Date(iso);
+  if (!endIso) return DATE_FMT.format(start);
+  const end = new Date(endIso);
+  return DATE_FMT.format(start) === DATE_FMT.format(end) ? DATE_FMT.format(start) : DATE_FMT.formatRange(start, end);
+}

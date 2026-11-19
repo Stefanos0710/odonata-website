@@ -477,7 +477,7 @@ h3 { font-size: 1.15rem; }
 .entry-form { display: flex; flex-direction: column; gap: 1.4rem; }
 .form-top h1 { font-size: 2.2rem; font-variation-settings: "wdth" 112; margin-top: 0.4rem; }
 .field-title input { font-size: 1.35rem; font-weight: 650; }
-.field-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: end; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr auto 1fr; gap: 1rem; align-items: end; }
 .duration > div { display: flex; gap: 0.5rem; }
 .duration label { flex-direction: row; align-items: center; gap: 0.35rem; font-weight: 400; }
 .duration input { width: 4.8rem; }

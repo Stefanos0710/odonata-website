@@ -6,6 +6,7 @@ export type Draft = {
   originalSlug?: string;
   title: string;
   date: string;
+  endDate?: string; // absent in drafts saved before date ranges existed
   hours: string;
   mins: string;
   phase: string;
