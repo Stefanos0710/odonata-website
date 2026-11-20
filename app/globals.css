@@ -333,21 +333,14 @@ h3 { font-size: 1.15rem; }
 
 /* Partners */
 .partners { scroll-margin-top: 1rem; }
-.partners .band-head { max-width: 46rem; }
-.partners .band-head p:not(.eyebrow) { color: var(--ink); font: 400 1.2rem/1.5 var(--serif); }
-.partners-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; align-items: stretch; }
-.needed, .perks-box { padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-2); }
-.needed { border-top: 4px solid var(--bark); }
-.perks-box { border-top: 4px solid var(--violet); }
-.needed p { margin: 0.6rem 0 0; }
-.perks { padding-left: 1.2rem; margin: 0.6rem 0 0; }
-.perks li { margin: 0.3rem 0; }
-.partners-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem; align-items: center; margin-top: 1.5rem; }
-.partners-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin: 0; font-weight: 600; font-size: 1.1rem; overflow-wrap: anywhere; }
-.logo-wall { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1rem; }
-.logo-slot { display: grid; place-items: center; min-height: 7rem; border: 2px dashed var(--line); border-radius: var(--radius); color: var(--muted); font-size: 0.95rem; }
-.logo-slot:only-child { grid-column: 1 / -1; }
-@media (max-width: 720px) { .partners-body, .partners-foot { grid-template-columns: 1fr; } }
+.sponsor-feature { display: grid; grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr); gap: 2rem; align-items: center; padding: 2rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-2); }
+.sponsor-logo { display: grid; place-items: center; min-height: 8rem; padding: 1.25rem; border-radius: var(--radius); background: #fff; }
+.sponsor-logo img { max-width: 100%; max-height: 5rem; object-fit: contain; }
+.sponsor-name { color: #15302a; font-weight: 820; font-size: 1.5rem; line-height: 1.1; text-align: center; }
+.sponsor-feature .eyebrow { margin: 0 0 0.4rem; }
+.sponsor-text { margin: 0; max-width: var(--measure); color: var(--ink); font: 400 1.2rem/1.5 var(--serif); }
+.partners-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin: 1.5rem 0 0; font-weight: 600; font-size: 1.1rem; }
+@media (max-width: 720px) { .sponsor-feature { grid-template-columns: 1fr; gap: 1.25rem; padding: 1.25rem; } }
 
 /* Cards */
 .cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.5rem; }

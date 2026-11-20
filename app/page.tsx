@@ -6,6 +6,13 @@ import { getCommits } from "@/lib/github";
 import { CONTACT_EMAIL } from "@/lib/site";
 import { ContourMap } from "./contour-map";
 import { SessionCalendar } from "./session-calendar";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+// Official logo goes in public/sponsors/; falls back to the name in text until it's there.
+const SPONSOR_LOGO = ["svg", "png", "webp"]
+  .map((ext) => `/sponsors/rohde-schwarz.${ext}`)
+  .find((src) => existsSync(path.join(process.cwd(), "public", src)));
 
 const berlinDay = (iso: string) => new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); // YYYY-MM-DD
 const shortDate = (iso: string) =>
@@ -240,8 +247,8 @@ export default async function Home() {
           </li>
         </ol>
         <p className="forest-need">
-          <strong>What it needs:</strong> an NVIDIA Jetson Orin NX 16GB for on-board AI.{" "}
-          <a href="#partners">See how you can help</a>
+          <strong>The brain:</strong> an NVIDIA Jetson Orin NX 16GB for on-board AI, lent by Rohde &amp; Schwarz.{" "}
+          <a href="#partners">Meet the partners</a>
         </p>
         <p className="forest-note">This part is just starting. Progress will show up in the journal as it happens.</p>
       </section>
@@ -249,43 +256,28 @@ export default async function Home() {
       <section id="partners" className="partners band chapter" aria-labelledby="partners-title">
         <div className="band-head">
           <p className="eyebrow">05 · Partners</p>
-          <h2 id="partners-title">Help Odonata into the forest</h2>
-          <p>
-            Odonata&rsquo;s next step is flying through real forest without GPS or ground markers. For that it needs
-            on-board AI: an NVIDIA Jetson Orin NX 16GB to run two depth cameras and one RGB camera on the drone
-            itself. I&rsquo;m looking for partners to support this step for Jugend forscht 2027.
-          </p>
+          <h2 id="partners-title">Made possible by</h2>
         </div>
-        <div className="partners-body">
-          <div className="needed">
-            <h3>What&rsquo;s needed</h3>
-            <p>
-              <strong>An NVIDIA Jetson Orin NX 16GB.</strong> Under the canopy there is no GPS and there are no
-              ground markers, so the drone has to see and decide on its own: two depth cameras to avoid trunks and
-              branches, and one RGB camera to spot infestation, all processed on board and in real time. The small
-              single-board computer on v1 is far too slow for that.
+        <div className="sponsor-feature">
+          <div className="sponsor-logo">
+            {SPONSOR_LOGO ? (
+              <img src={SPONSOR_LOGO} alt="Rohde & Schwarz" />
+            ) : (
+              <span className="sponsor-name">Rohde &amp; Schwarz</span>
+            )}
+          </div>
+          <div>
+            <p className="eyebrow">Main sponsor</p>
+            <p className="sponsor-text">
+              Rohde &amp; Schwarz lent me the NVIDIA Jetson Orin NX 16GB, the brain of Odonata v2. It runs the cameras
+              and the AI on board, and without it the forest step would not be possible. Thank you!
             </p>
           </div>
-          <div className="perks-box">
-            <h3>Partners get</h3>
-            <ul className="perks">
-              <li>Their logo here on odonata.dev</li>
-              <li>Their logo on my competition poster and stand at Jugend forscht 2027</li>
-              <li>A credit in my written report</li>
-              <li>A build write-up showing what their support made possible</li>
-            </ul>
-          </div>
         </div>
-        <div className="partners-foot">
-          <ul className="logo-wall" aria-label="Partner logos">
-            <li className="logo-slot">Your logo here</li>
-          </ul>
-          <p className="partners-cta">
-            <span>Interested?</span>
-            <a className="button" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>Write to me</a>
-            <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>{CONTACT_EMAIL}</a>
-          </p>
-        </div>
+        <p className="partners-cta">
+          <span>Interested in being a sponsor too?</span>
+          <a className="button" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>Write to me</a>
+        </p>
       </section>
 
       <section id="latest" className="band chapter" aria-labelledby="latest-title">
