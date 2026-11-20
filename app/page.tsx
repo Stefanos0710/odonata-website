@@ -9,9 +9,9 @@ import { SessionCalendar } from "./session-calendar";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
-// Official logo goes in public/sponsors/; falls back to the name in text until it's there.
+// Official logo goes in public/logos/; falls back to the name in text until it's there.
 const SPONSOR_LOGO = ["svg", "png", "webp"]
-  .map((ext) => `/sponsors/rohde-schwarz.${ext}`)
+  .map((ext) => `/logos/rohde-schwarz.${ext}`)
   .find((src) => existsSync(path.join(process.cwd(), "public", src)));
 
 const berlinDay = (iso: string) => new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); // YYYY-MM-DD
@@ -94,17 +94,17 @@ export default async function Home() {
           <p className="eyebrow">01 · Partners</p>
           <h2 id="partners-title">Made possible by</h2>
         </div>
-        <div className="sponsor-feature">
-          <div className="sponsor-logo">
+        <div className="backer">
+          <div className="backer-logo">
             {SPONSOR_LOGO ? (
               <img src={SPONSOR_LOGO} alt="Rohde & Schwarz" />
             ) : (
-              <span className="sponsor-name">Rohde &amp; Schwarz</span>
+              <span className="backer-name">Rohde &amp; Schwarz</span>
             )}
           </div>
           <div>
             <p className="eyebrow">Main sponsor</p>
-            <p className="sponsor-text">
+            <p className="backer-text">
               Rohde &amp; Schwarz lent me the NVIDIA Jetson Orin NX 16GB, the brain of Odonata v2. It runs the cameras
               and the AI on board, and without it the forest step would not be possible. Thank you!
             </p>
