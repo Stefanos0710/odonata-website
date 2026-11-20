@@ -89,9 +89,36 @@ export default async function Home() {
         <p className="hero-hint">Each point on the path is a build session, bigger means longer. Point at one to see it.</p>
       </section>
 
+      <section id="partners" className="partners band chapter" aria-labelledby="partners-title">
+        <div className="band-head">
+          <p className="eyebrow">01 · Partners</p>
+          <h2 id="partners-title">Made possible by</h2>
+        </div>
+        <div className="sponsor-feature">
+          <div className="sponsor-logo">
+            {SPONSOR_LOGO ? (
+              <img src={SPONSOR_LOGO} alt="Rohde & Schwarz" />
+            ) : (
+              <span className="sponsor-name">Rohde &amp; Schwarz</span>
+            )}
+          </div>
+          <div>
+            <p className="eyebrow">Main sponsor</p>
+            <p className="sponsor-text">
+              Rohde &amp; Schwarz lent me the NVIDIA Jetson Orin NX 16GB, the brain of Odonata v2. It runs the cameras
+              and the AI on board, and without it the forest step would not be possible. Thank you!
+            </p>
+          </div>
+        </div>
+        <p className="partners-cta">
+          <span>Interested in being a sponsor too?</span>
+          <a className="button" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>Write to me</a>
+        </p>
+      </section>
+
       <section id="about" className="band chapter about" aria-labelledby="about-title">
         <div className="band-head">
-          <p className="eyebrow">01 · About</p>
+          <p className="eyebrow">02 · About</p>
           <h2 id="about-title">Who&rsquo;s building it</h2>
           <p>
             I&rsquo;m Stefanos, a student from Bavaria, and I build Odonata myself, from CAD and PCB to code.
@@ -114,7 +141,7 @@ export default async function Home() {
             <img src="/project/render-hero.webp" alt="Rendered CAD model of Odonata: an X-frame drone with prop guards" />
           </figure>
           <div className="machine-text">
-            <p className="eyebrow">02 · The drone</p>
+            <p className="eyebrow">03 · The drone</p>
             <h2 id="drone-title">Odonata v1</h2>
             <p>
               Built for Hack Club Fallout in spring 2026. A Raspberry Pi Zero 2 W does the thinking, a DarwinFPV
@@ -157,7 +184,7 @@ export default async function Home() {
 
       <section id="build" className="band chapter" aria-labelledby="build-title">
         <div className="band-head">
-          <p className="eyebrow">03 · The build</p>
+          <p className="eyebrow">04 · The build</p>
           <h2 id="build-title">The build, phase by phase</h2>
           <p>Every session is written up in the journal. Point at a day to see what happened.</p>
         </div>
@@ -224,7 +251,7 @@ export default async function Home() {
 
       <section id="forest" className="forest band chapter" aria-labelledby="forest-title">
         <div className="band-head">
-          <p className="eyebrow">04 · What&rsquo;s next</p>
+          <p className="eyebrow">05 · What&rsquo;s next</p>
           <h2 id="forest-title">Next: into the forest</h2>
           <p>
             For Jugend forscht 2027, Odonata leaves the living room. Bark beetles (Borkenkäfer) kill large areas
@@ -251,33 +278,6 @@ export default async function Home() {
           <a href="#partners">Meet the partners</a>
         </p>
         <p className="forest-note">This part is just starting. Progress will show up in the journal as it happens.</p>
-      </section>
-
-      <section id="partners" className="partners band chapter" aria-labelledby="partners-title">
-        <div className="band-head">
-          <p className="eyebrow">05 · Partners</p>
-          <h2 id="partners-title">Made possible by</h2>
-        </div>
-        <div className="sponsor-feature">
-          <div className="sponsor-logo">
-            {SPONSOR_LOGO ? (
-              <img src={SPONSOR_LOGO} alt="Rohde & Schwarz" />
-            ) : (
-              <span className="sponsor-name">Rohde &amp; Schwarz</span>
-            )}
-          </div>
-          <div>
-            <p className="eyebrow">Main sponsor</p>
-            <p className="sponsor-text">
-              Rohde &amp; Schwarz lent me the NVIDIA Jetson Orin NX 16GB, the brain of Odonata v2. It runs the cameras
-              and the AI on board, and without it the forest step would not be possible. Thank you!
-            </p>
-          </div>
-        </div>
-        <p className="partners-cta">
-          <span>Interested in being a sponsor too?</span>
-          <a className="button" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Partnering with Odonata")}`}>Write to me</a>
-        </p>
       </section>
 
       <section id="latest" className="band chapter" aria-labelledby="latest-title">
