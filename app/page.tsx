@@ -6,13 +6,6 @@ import { getCommits } from "@/lib/github";
 import { CONTACT_EMAIL } from "@/lib/site";
 import { ContourMap } from "./contour-map";
 import { SessionCalendar } from "./session-calendar";
-import { existsSync } from "node:fs";
-import path from "node:path";
-
-// Official logo goes in public/logos/; falls back to the name in text until it's there.
-const SPONSOR_LOGO = ["svg", "png", "webp"]
-  .map((ext) => `/logos/rohde-schwarz.${ext}`)
-  .find((src) => existsSync(path.join(process.cwd(), "public", src)));
 
 const berlinDay = (iso: string) => new Date(iso).toLocaleDateString("sv-SE", { timeZone: "Europe/Berlin" }); // YYYY-MM-DD
 const shortDate = (iso: string) =>
@@ -96,17 +89,26 @@ export default async function Home() {
         </div>
         <div className="backer">
           <div className="backer-logo">
-            {SPONSOR_LOGO ? (
-              <img src={SPONSOR_LOGO} alt="Rohde & Schwarz" />
-            ) : (
-              <span className="backer-name">Rohde &amp; Schwarz</span>
-            )}
+            <img className="mono" src="/logos/rohde-schwarz.svg" alt="Rohde & Schwarz" />
           </div>
           <div>
             <p className="eyebrow">Main sponsor</p>
             <p className="backer-text">
               Rohde &amp; Schwarz lent me the NVIDIA Jetson Orin NX 16GB, the brain of Odonata v2. It runs the cameras
               and the AI on board, and without it the forest step would not be possible. Thank you!
+            </p>
+          </div>
+        </div>
+        <div className="backer minor">
+          <div className="backer-logo">
+            <img src="/logos/au-star.webp" alt="AU-STAR Electron Technology" />
+          </div>
+          <div>
+            <p className="eyebrow">Supporter</p>
+            <p className="backer-text">
+              <a href="https://auvideo.en.alibaba.com/" target="_blank" rel="noopener">AU-STAR Electron Technology</a>{" "}
+              gave me a discount on the camera modules, helped me understand them in detail and configured each
+              camera with the lenses and filters I need.
             </p>
           </div>
         </div>
