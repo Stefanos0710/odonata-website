@@ -333,15 +333,15 @@ h3 { font-size: 1.15rem; }
 
 /* Partners */
 .partners { scroll-margin-top: 1rem; }
-.backer { display: grid; grid-template-columns: minmax(12rem, 18rem) minmax(0, 1fr); gap: 2rem; align-items: center; padding: 2rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-2); }
-.backer-logo { display: grid; place-items: center; min-height: 8rem; padding: 1.25rem; border-radius: var(--radius); background: #fff; }
-.backer-logo img { max-width: 100%; max-height: 5rem; object-fit: contain; }
+.backer { display: grid; grid-template-columns: minmax(14rem, 24rem) minmax(0, 1fr); gap: 2rem; align-items: center; padding: 2rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-2); }
+.backer-logo { display: grid; place-items: center; min-height: 8rem; padding: 1.25rem 1.5rem; border-radius: var(--radius); background: #fff; }
+.backer-logo img { width: 100%; max-height: 6rem; object-fit: contain; }
 .backer-logo img.mono { filter: brightness(0); } /* R&S ship a light-grey logo for dark headers; black on the white box */
 .backer .eyebrow { margin: 0 0 0.4rem; }
 .backer-text { margin: 0; max-width: var(--measure); color: var(--ink); font: 400 1.2rem/1.5 var(--serif); }
-.backer.minor { margin-top: 1rem; grid-template-columns: minmax(8rem, 11rem) minmax(0, 1fr); gap: 1.5rem; padding: 1.25rem 2rem; }
-.backer.minor .backer-logo { min-height: 4.5rem; padding: 0.75rem; }
-.backer.minor .backer-logo img { max-height: 3rem; }
+.backer.minor { margin-top: 1rem; grid-template-columns: minmax(10rem, 15rem) minmax(0, 1fr); gap: 1.5rem; padding: 1.25rem 2rem; }
+.backer.minor .backer-logo { min-height: 6rem; padding: 0.5rem; }
+.backer.minor .backer-logo img { max-height: 5.5rem; }
 .backer.minor .backer-text { font-size: 1.05rem; }
 .partners-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin: 1.5rem 0 0; font-weight: 600; font-size: 1.1rem; }
 @media (max-width: 720px) { .backer, .backer.minor { grid-template-columns: 1fr; gap: 1.25rem; padding: 1.25rem; } }
